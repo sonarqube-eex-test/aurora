@@ -7,7 +7,7 @@ try {
     enabled: process.env.ANALYZE === 'true',
   });
 } catch (error) {
-  // If @next/bundle-analyzer is not available, use identity function
+  console.warn(`@next/bundle-analyzer is not available, skipping bundle analysis: ${error}`);
   withBundleAnalyzer = (config: NextConfig) => config;
 }
 

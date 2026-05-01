@@ -108,7 +108,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         const formatted = JSON.stringify(parsed, null, 2);
         setFormattedCode(formatted);
       } catch (e) {
-        // If parsing fails, use the original code
+        console.error("Failed to format code as JSON:", e);
         setFormattedCode(code);
       }
     } else {

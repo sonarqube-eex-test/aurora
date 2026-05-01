@@ -25,7 +25,7 @@ export default function CountUp({
   separator = '',
   onStart,
   onEnd
-}: CountUpProps) {
+}: Readonly<CountUpProps>) {
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(direction === 'down' ? to : from);
 
@@ -64,7 +64,7 @@ export default function CountUp({
 
       const formattedNumber = Intl.NumberFormat('en-US', options).format(latest);
 
-      return separator ? formattedNumber.replace(/,/g, separator) : formattedNumber;
+      return separator ? formattedNumber.replaceAll(',', separator) : formattedNumber;
     },
     [maxDecimals, separator]
   );

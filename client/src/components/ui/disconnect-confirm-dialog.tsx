@@ -25,7 +25,7 @@ export function DisconnectConfirmDialog({
   connectorName,
   onConfirm,
   description,
-}: DisconnectConfirmDialogProps) {
+}: Readonly<DisconnectConfirmDialogProps>) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>

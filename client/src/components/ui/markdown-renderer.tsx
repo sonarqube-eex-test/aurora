@@ -338,9 +338,7 @@ const normalizeCodeBlocks = (markdown: string): string => {
       
       // Only create a code block if there's actual code content and non-empty content
       if (hasCodeContent && hasNonEmptyContent && codeContent.length > 0) {
-        normalized.push(`\`\`\`${lang}`);
-        normalized.push(...codeContent);
-        normalized.push("```");
+        normalized.push(`\`\`\`${lang}`, ...codeContent, "```");
         i = j;
         continue;
       } else {
@@ -376,11 +374,11 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     // Also filter out standalone tool call delimiters
     const standaloneDelimiterRegex = /[<｜▁>]{0,8}tool[▁_\s]{0,4}calls?[▁_\s]{0,4}(begin|end)[<｜▁>]{0,8}/gi;
     
-    let filtered = content.replace(toolCallDelimiterRegex, '');
-    filtered = filtered.replace(standaloneDelimiterRegex, '');
+    let filtered = content.replaceAll(toolCallDelimiterRegex, '');
+    filtered = filtered.replaceAll(standaloneDelimiterRegex, '');
 
     // Strip LLM internal metadata blocks entirely (tags + content).
-    filtered = filtered.replace(/<(result_quality_reflection|result_quality_score|search_quality_reflection|search_quality_score|antthinking)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
+    filtered = filtered.replaceAll(/<(result_quality_reflection|result_quality_score|search_quality_reflection|search_quality_score|antthinking)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
 
     // Remove non-HTML tags but keep their inner text to avoid React DOM warnings.
     const htmlTagPattern = /^(?:h[1-6]|p|div|span|a|ul|ol|li|table|thead|tbody|tfoot|tr|th|td|pre|code|blockquote|em|strong|b|i|u|s|del|ins|sub|sup|br|hr|img|details|summary|figure|figcaption|mark|small|dl|dt|dd|abbr|cite|kbd|samp|var|q|ruby|rt|rp|wbr|caption|col|colgroup|article|aside|footer|header|main|nav|section|audio|video|source|picture|canvas|iframe|form|input|textarea|select|option|button|label)$/i;

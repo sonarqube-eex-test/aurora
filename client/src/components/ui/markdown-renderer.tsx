@@ -196,7 +196,7 @@ const normalizeCodeBlocks = (markdown: string): string => {
     return markdown;
   }
   
-  const languages = [
+  const languages = new Set([
     "hcl",
     "terraform",
     "json",
@@ -227,7 +227,7 @@ const normalizeCodeBlocks = (markdown: string): string => {
     "ini",
     "toml",
     "properties"
-  ];
+  ]);
 
   const lines = markdown.split("\n");
   const normalized: string[] = [];
@@ -268,7 +268,7 @@ const normalizeCodeBlocks = (markdown: string): string => {
   const stopConditions = (line: string, lang: string) => {
     const trimmed = line.trim();
     return isHeading(trimmed) ||
-           languages.includes(trimmed.toLowerCase()) ||
+           languages.has(trimmed.toLowerCase()) ||
            isCodeFence(trimmed) ||
            // Stop at markdown elements that clearly indicate end of code
            /^\s*[-*+]\s/.test(line) || // List items
@@ -301,7 +301,7 @@ const normalizeCodeBlocks = (markdown: string): string => {
     }
 
     // Detect a line that is exactly a language id (case-insensitive)
-    if (languages.includes(trimmed.toLowerCase()) && !isListItem(line)) {
+    if (languages.has(trimmed.toLowerCase()) && !isListItem(line)) {
       const lang = trimmed.toLowerCase();
       let codeContent: string[] = [];
       let hasCodeContent = false;
@@ -338,9 +338,7 @@ const normalizeCodeBlocks = (markdown: string): string => {
       
       // Only create a code block if there's actual code content and non-empty content
       if (hasCodeContent && hasNonEmptyContent && codeContent.length > 0) {
-        normalized.push(`\`\`\`${lang}`);
-        normalized.push(...codeContent);
-        normalized.push("```");
+        normalized.push(`\`\`\`${lang}`, ...codeContent, "```");
         i = j;
         continue;
       } else {
@@ -384,12 +382,12 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 
     // Remove non-HTML tags but keep their inner text to avoid React DOM warnings.
     const htmlTagPattern = /^(?:h[1-6]|p|div|span|a|ul|ol|li|table|thead|tbody|tfoot|tr|th|td|pre|code|blockquote|em|strong|b|i|u|s|del|ins|sub|sup|br|hr|img|details|summary|figure|figcaption|mark|small|dl|dt|dd|abbr|cite|kbd|samp|var|q|ruby|rt|rp|wbr|caption|col|colgroup|article|aside|footer|header|main|nav|section|audio|video|source|picture|canvas|iframe|form|input|textarea|select|option|button|label)$/i;
-    filtered = filtered.replace(/<\/?([a-zA-Z][a-zA-Z0-9_-]*)\b[^>]*>/g, (match, tag) => {
+    filtered = filtered.replaceAll(/<\/?([a-zA-Z][a-zA-Z0-9_-]*)\b[^>]*>/g, (match, tag) => {
       return htmlTagPattern.test(tag) ? match : '';
     });
     
     // Clean up any extra whitespace left behind
-    filtered = filtered.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+    filtered = filtered.replaceAll(/\n\s*\n\s*\n/g, '\n\n').trim();
     
     return filtered;
   }, [content]);

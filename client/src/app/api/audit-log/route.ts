@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const { headers: authHeaders } = authResult;
     const params = request.nextUrl.searchParams.toString();
-    const url = `${API_BASE_URL}/api/audit-log${params ? `?${params}` : ''}`;
+    const queryString = params ? `?${params}` : '';
+    const url = `${API_BASE_URL}/api/audit-log${queryString}`;
     const response = await fetch(url, { method: 'GET', headers: authHeaders, credentials: 'include', cache: 'no-store' });
     if (!response.ok) {
       const text = await response.text();

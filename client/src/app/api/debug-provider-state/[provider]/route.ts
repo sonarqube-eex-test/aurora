@@ -14,7 +14,7 @@ export async function GET(
       return authResult // Return the error response
     }
 
-    const { userId, headers: authHeaders } = authResult
+    const { headers: authHeaders } = authResult
 
     const { provider } = await params
 
